@@ -12,6 +12,19 @@ const removeElement = (node) => {
     }
 };
 
+/*const removeSiblings = node => {
+    while (node.nextElementSibling !== null && node.nodeName === node.nextElementSibling.nodeName) {
+        removeElement(node.nextElementSibling);
+    }
+};*/
+
+const filter = (node, selector) => {
+    let child = node.querySelector(selector);
+    if (child === null) {
+        removeElement(node);
+    }
+};
+
 /**
  * collect functions and return them
  * @param contents - string
@@ -21,8 +34,13 @@ const replacer = contents => {
     const dom = new JSDOM(contents, {
         contentType: "application/xhtml+xml;"
     });
-    let accounts = dom.window.document.querySelectorAll('Accounts');
-    accounts.forEach(accountNode => removeElement(accountNode));
+
+    const COR_ACCOUNT_SELECTOR = "Accounts[Account^='301']";
+
+    let BICDirectoryEntries = dom.window.document.querySelectorAll('BICDirectoryEntry');
+    console.log(BICDirectoryEntries.length);
+    BICDirectoryEntries.forEach(bicNode => filter(bicNode, COR_ACCOUNT_SELECTOR));
+    console.log(dom.window.document.querySelectorAll('BICDirectoryEntry').length);
     contents = dom.serialize();
     return contents;
 };
