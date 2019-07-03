@@ -1,0 +1,4 @@
+.idea/*
+node_modules/*
+long_box/*
+data/node_modules/*
