@@ -23,7 +23,7 @@ const getQuery = (reqQuery) => {
 const getEntries = (req, res, next) => {
     // pagination
     let perPage = 50;
-    let page = req.query.page || 1;
+    let page = Number.parseInt(req.query.page, 10) || 1;
 
     let query = getQuery(req.query);
     Credit_Organization
@@ -31,8 +31,7 @@ const getEntries = (req, res, next) => {
         .skip((perPage * page) - perPage)
         .limit(perPage)
         .exec((err, orgs) => {
-            Credit_Organization.count().exec((err, count) => {
-                if (err) return next(err);
+            Credit_Organization.estimatedDocumentCount().then((count) => {
 
                 let data = [];
                 if (Array.isArray(orgs)) {
@@ -46,18 +45,21 @@ const getEntries = (req, res, next) => {
                     res.send({
                         data,
                         page: 1,
-                        pages: 1
+                        pageCount: 1
                     });
 
                 } else {
                     res.send({
                         data,
                         page,
-                        pages: Math.ceil(count / perPage)
+                        pageCount: Math.ceil(count / perPage)
                     });
                 }
                 next();
-            });
+            },
+            err => {
+                if (err) return next(err);
+            })
         });
 };
 
