@@ -1,24 +1,64 @@
 const Credit_Organization = require('../models/creditOrganization.model');
 const DataConverter = require('../models/DataConverter');
 
-// requested fields from DataBase
+// requested fields from document
 const fields = 'BIC ParticipantInfo.NameP Accounts ParticipantInfo.Tnp ParticipantInfo.Nnp ParticipantInfo.Adr';
+// filters: [bic, name]
+
+const getQuery = (reqQuery) => {
+    if (Object.keys(reqQuery).length > 0) {
+        let { bic, name } = reqQuery;
+        let query = {};
+        if (bic) {
+            query["BIC"] = bic;
+        }
+        if (name) {
+            query["ParticipantInfo.NameP"] = name
+        }
+        return query;
+    }
+    return {};
+};
 
 const getEntries = (req, res, next) => {
-    Credit_Organization.find({}, fields, (err, orgs) => {
-        let data = [];
+    // pagination
+    let perPage = 50;
+    let page = req.query.page || 1;
 
-        if (Array.isArray(orgs)) {
-            data = orgs.map(org => new DataConverter(org));
-        }  else {
-            // logger?
-            next(`expected array, but got ${orgs}`);
-        }
+    let query = getQuery(req.query);
+    Credit_Organization
+        .find(query, fields)
+        .skip((perPage * page) - perPage)
+        .limit(perPage)
+        .exec((err, orgs) => {
+            Credit_Organization.count().exec((err, count) => {
+                if (err) return next(err);
 
-        if (err) return next(err);
-        res.send(data);
-        next();
-    });
+                let data = [];
+                if (Array.isArray(orgs)) {
+                    data = orgs.map(org => new DataConverter(org));
+                }  else {
+                    next(`expected array, but got ${orgs}`);
+                }
+
+                // todo refactor
+                if (data.length === 1) {
+                    res.send({
+                        data,
+                        page: 1,
+                        pages: 1
+                    });
+
+                } else {
+                    res.send({
+                        data,
+                        page,
+                        pages: Math.ceil(count / perPage)
+                    });
+                }
+                next();
+            });
+        });
 };
 
 const getEntry = (req, res, next) => {

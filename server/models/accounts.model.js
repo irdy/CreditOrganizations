@@ -6,7 +6,7 @@ const accountsSchema = new Schema({
         type: String,
         validate: {
             validator: function(v) {
-                return /\d{20}/.test(v);
+                return /301\d{17}/.test(v);
             },
             message: props => `${props.value} is not a valid account!`
         },

@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const router = require('./routes/creditOrganization.route');
 const mongoose = require('mongoose');
 //const formidableMiddleware = require('express-formidable');
+const { getErrorStatus } = require('./errorStatuses');
 
 const app = express();
 const APP_PORT = 3002;
@@ -29,7 +30,7 @@ function errorHandler(err, req, res, next) {
         message: err._message
     };
 
-    res.status(err.status || 500);
+    res.status(err.status || getErrorStatus(err) || 500);
     console.log(error);
     res.json(error);
 }

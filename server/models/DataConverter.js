@@ -12,15 +12,16 @@ class DataConverter {
         this.Tnp = Tnp;
         this.Nnp = Nnp;
         this.Adr = Adr;
-        this.account = DataConverter.getCorAccount(data.Accounts);
+        this.account = DataConverter.getCorAccount(data.Accounts, data.BIC);
     }
 
-    static getCorAccount(accounts) {
+    static getCorAccount(accounts, BIC) {
         if (Array.isArray(accounts)) {
             let account = accounts.find(account => account.Account.toString().startsWith('301'));
             if (account !== undefined) {
                 return account.Account;
             }
+            console.log(`cannot get corAccount from entry with ${BIC} BIC`);
         } else if (accounts.Account) {
             return accounts.Account;
         }
