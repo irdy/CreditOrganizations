@@ -23,7 +23,7 @@ const Schema = mongoose.Schema;
 // {type: Number, required: true}
 
 const participantInfoSchema = new Schema({
-    "NameP" : {type: String, required: true},
+    /*"NameP" : {type: String, required: true},
     "Rgn" : {type: Number, required: true},
     "Ind" : {type: Number, required: true},
     "Tnp" : {type: String, required: true},
@@ -36,21 +36,22 @@ const participantInfoSchema = new Schema({
     "XchType" : {type: Number, required: true},
     "UID" : {type: Number, required: true},
     "NPSParticipant" : {type: Number, required: true},
-    "ParticipantStatus" : {type: String, required: true}
-    // "NameP" : {type: String, required: true},
-    // "Rgn" : {type: String, required: true},
-    // "Ind" : {type: String, required: true},
-    // "Tnp" : {type: String, required: true},
-    // "Nnp" : {type: String, required: true},
-    // "Adr" : {type: String, required: true},
-    // "PrntBIC" : {type: String, required: true},
-    // "DateIn" : {type: String, required: true},
-    // "PtType" : {type: String, required: true},
-    // "Srvcs" : {type: String, required: true},
-    // "XchType" : {type: String, required: true},
-    // "UID" : {type: String, required: true},
-    // "NPSParticipant" : {type: String, required: true},
-    // "ParticipantStatus" : {type: String, required: true}
+    "ParticipantStatus" : {type: String, required: true}*/
+
+    "NameP" : {type: String, required: true},
+    "Rgn" : {type: String},
+    "Ind" : {type: String},
+    "Tnp" : {type: String, required: true},
+    "Nnp" : {type: String, required: true},
+    "Adr" : {type: String, required: true},
+    "PrntBIC" : {type: String},
+    "DateIn" : {type: String},
+    "PtType" : {type: String},
+    "Srvcs" : {type: String},
+    "XchType" : {type: String},
+    "UID" : {type: String},
+    "NPSParticipant" : {type: String},
+    "ParticipantStatus" : {type: String}
 });
 
 module.exports = participantInfoSchema;

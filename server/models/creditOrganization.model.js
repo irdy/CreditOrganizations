@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const participantInfoSchema = require('./participantInfo.model');
+const accountsSchema = require('./accounts.model');
 
 const Schema = mongoose.Schema;
 
 const creditOrganizationSchema = new Schema({
-    BIC: {type: Number, required: true},
-    ParticipantInfo: participantInfoSchema
+    BIC: {type: String, required: true},
+    ParticipantInfo: {type: participantInfoSchema, required: true},
+    Accounts: [{type: accountsSchema, required: true}]
 });
 
 const model = mongoose.model('Credit_Organization', creditOrganizationSchema);
