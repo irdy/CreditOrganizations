@@ -7,7 +7,7 @@ const Schema = mongoose.Schema;
 const creditOrganizationSchema = new Schema({
     BIC: {
         type: String,
-        match: [/\d{9}/, 'BIC must be 9 digits'],
+        match: [/^\d{9}$/, 'BIC must be 9 digits'],
         required: true
     },
     ParticipantInfo: {type: participantInfoSchema, required: true},

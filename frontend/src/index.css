@@ -12,6 +12,15 @@ code {
     monospace;
 }
 
+.iconWrapper {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
 /* Pagination */
 #react-paginate ul {
     display: -ms-flexbox;
@@ -19,6 +28,7 @@ code {
     padding-left: 0;
     list-style: none;
     border-radius: 0.25rem;
+    margin-bottom: 0;
 }
 
 #react-paginate ul li a {

@@ -1,7 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
 import ReactPaginate from 'react-paginate';
+import Heading from './Heading';
+import { Button } from 'reactstrap';
+import OrganizationsFilters from './OrganizationsFilters';
+import { Alert } from 'reactstrap';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faEdit } from '@fortawesome/free-solid-svg-icons'
 
 const SERVER_URL = 'http://localhost:3002';
 class OrganizationsList extends React.Component {
@@ -10,9 +16,15 @@ class OrganizationsList extends React.Component {
         this.state = {
             data: [],
             page: 1,
-            pageCount: 1
-            // filters
-        }
+            pageCount: 1,
+            selected: 0,
+            filters: {
+                bic: '',
+                name: ''
+            }
+        };
+        this.perPage = 50;
+        this.heading = 'Список организаций';
     }
 
     static addSearchParams(url, params) {
@@ -21,24 +33,33 @@ class OrganizationsList extends React.Component {
         return _url;
     }
 
+    populateCollectionWithFilters(collection) {
+        let { filters } = this.state;
+        for (let filter in filters) {
+            if (typeof filters[filter] === 'string' && filters[filter] !== '') {
+                collection[filter] = filters[filter];
+            }
+        }
+        return collection;
+    }
+
     createParamsCollection() {
         let collection = Object.create(null);
         collection.page = this.state.page;
+        this.populateCollectionWithFilters(collection);
         return collection;
     }
 
     loadData() {
         let URL = SERVER_URL + '/creditOrganizations';
         URL = OrganizationsList.addSearchParams(URL, this.createParamsCollection());
-        console.log(URL);
         fetch(URL, {
-            /*"Access-Control-Allow-Origin": "*",*/
             "ContentType": "application/json; charset=utf-8"
         })
             .then(res => res.json())
             .then(data => {
                 if (data) {
-                    console.dir(data.data[0]);
+                    //console.dir(data.data[0]);
                     let { page, pageCount } = data;
                     if (Array.isArray(data.data) && Number.isInteger(page) && Number.isInteger(pageCount)) {
                         this.setState({
@@ -61,53 +82,150 @@ class OrganizationsList extends React.Component {
     handlePageClick(data) {
         let currentPage = data.selected + 1;
         this.setState({
+            selected: data.selected,
             page: currentPage
         }, this.loadData);
     }
 
-    render() {
+    filter(filters) {
+        let notEmpty = Object.values(filters).filter(filter => typeof filter === 'string' && filter !== '');
+        if (notEmpty) {
+            this.setState({
+                ...this.state,
+                ...{
+                    filters: {
+                        ...this.state.filters,
+                        ...filters
+                    }
+                }
+            }, () => {
+                this.loadData();
+            })
+        }
+    }
+
+    static renderNoResults() {
         return (
-            <div>
-                <h2>OrganizationsList</h2>
-                <Table>
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>БИК</th>
-                        <th>Название</th>
-                        <th>Адрес</th>
-                        <th>Корсчет</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+            <Alert color="info">
+                Результатов не найдено
+            </Alert>
+        )
+    }
+
+    edit(bic) {
+        console.log(bic);
+    }
+
+    remove(bic) {
+        console.log(bic);
+    }
+
+    render() {
+        //console.log('RENDER!');
+        return (
+            <div className="container">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <Heading text={this.heading} />
+                    <OrganizationsFilters filtersChanged={this.filter.bind(this)} />
+                </div>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <Button color="primary">
+                        Добавить
+                    </Button>
+                    <div className="pagination-area">
                         {
-                            this.state.data.map((el, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{ index + 1 }</td>
-                                        <td>{ el.BIC }</td>
-                                        <td>{ el.name }</td>
-                                        <td>{ el.Tnp + ' ' + el.Nnp + ' ' + el.Adr }</td>
-                                        <td>{ el.account }</td>
-                                    </tr>
-                                )
-                            })
+                            this.state.pageCount > 1 && this.state.data.length > 0
+                                ? (
+                                    <div id="react-paginate" className="d-flex justify-content-center mb-3">
+                                        <ReactPaginate
+                                            pageCount={this.state.pageCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={this.handlePageClick.bind(this)}
+                                            forcePage={this.state.selected}
+                                        >
+                                        </ReactPaginate>
+                                    </div>
+                                ) : null
                         }
-                    </tbody>
-                </Table>
-                <div className="pagination-area">
-                    <div>Page: {this.state.page}</div>
-                    <div>Total pages: {this.state.pageCount}</div>
-                    <div id="react-paginate" className="d-flex justify-content-center">
-                        <ReactPaginate
-                            pageCount={this.state.pageCount}
-                            marginPagesDisplayed={2}
-                            pageRangeDisplayed={5}
-                            onPageChange={this.handlePageClick.bind(this)}
-                        >
-                        </ReactPaginate>
                     </div>
                 </div>
+                <div>
+                    {
+                        this.state.data.length > 0 ?
+                            (
+                                <Table>
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>БИК</th>
+                                        <th>Название</th>
+                                        <th>Адрес</th>
+                                        <th>Корсчет</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {
+                                        this.state.data.map((el, index) => {
+                                            return (
+                                                <tr key={index}>
+                                                    <td>{ (this.state.page - 1) * this.perPage + index + 1 }</td>
+                                                    <td>{ el.BIC }</td>
+                                                    <td>{ el.name }</td>
+                                                    <td>{ el.Tnp + ' ' + el.Nnp + ' ' + el.Adr }</td>
+                                                    <td>{ el.account }</td>
+                                                    <td className="d-flex">
+                                                        <div
+                                                            className="mr-3 iconWrapper"
+                                                            title="Редактировать"
+                                                            onClick={() => {
+                                                                this.edit.bind(this)(el.BIC)
+                                                            }}
+                                                        >
+                                                            <FontAwesomeIcon
+                                                                icon={faEdit}
+                                                            />
+                                                        </div>
+                                                        <div
+                                                            className="iconWrapper"
+                                                            title="Удалить"
+                                                            onClick={() => {
+                                                                this.remove.bind(this)(el.BIC)
+                                                            }}
+                                                        >
+                                                            <FontAwesomeIcon
+                                                                icon={faTrash}
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                    </tbody>
+                                </Table>
+                            ) : OrganizationsList.renderNoResults()
+                    }
+                </div>
+                <div className="pagination-area">
+                    {
+                        this.state.pageCount > 1 && this.state.data.length > 0
+                            ? (
+                                <div id="react-paginate" className="d-flex justify-content-center mb-3">
+                                    <ReactPaginate
+                                        pageCount={this.state.pageCount}
+                                        marginPagesDisplayed={2}
+                                        pageRangeDisplayed={5}
+                                        onPageChange={this.handlePageClick.bind(this)}
+                                        forcePage={this.state.selected}
+                                    >
+                                    </ReactPaginate>
+                                </div>
+                            ) : null
+                    }
+                </div>
+                {/*                    <div>Page: {this.state.page}</div>
+                    <div>Total pages: {this.state.pageCount}</div>*/}
             </div>
         )
     }

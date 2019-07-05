@@ -21,6 +21,7 @@ const getQuery = (reqQuery) => {
 };
 
 const getEntries = (req, res, next) => {
+    //console.log('get entries');
     // pagination
     let perPage = 50;
     let page = Number.parseInt(req.query.page, 10) || 1;
