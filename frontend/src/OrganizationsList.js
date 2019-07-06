@@ -8,6 +8,8 @@ import { Alert } from 'reactstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faEdit } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router-dom'
+import InfoModal from './InfoModal';
 
 const SERVER_URL = 'http://localhost:3002';
 class OrganizationsList extends React.Component {
@@ -21,6 +23,12 @@ class OrganizationsList extends React.Component {
             filters: {
                 bic: '',
                 name: ''
+            },
+            modalOpened: false,
+            modalMessage: '',
+            modalControls: {
+                ok: true,
+                cancel: false
             }
         };
         this.perPage = 50;
@@ -54,7 +62,9 @@ class OrganizationsList extends React.Component {
         let URL = SERVER_URL + '/creditOrganizations';
         URL = OrganizationsList.addSearchParams(URL, this.createParamsCollection());
         fetch(URL, {
-            "ContentType": "application/json; charset=utf-8"
+            headers: {
+                "Content-Type": "application/json; charset=utf-8"
+            }
         })
             .then(res => res.json())
             .then(data => {
@@ -112,32 +122,63 @@ class OrganizationsList extends React.Component {
         )
     }
 
-    edit(bic) {
-        console.log(bic);
+    openModal(message) {
+        this.setState({
+            modalOpened: true,
+            modalMessage: message
+        })
     }
 
     remove(bic) {
-        console.log(bic);
+        let URL = SERVER_URL + '/creditOrganizations/' + bic;
+        fetch(URL, {
+            method: 'DELETE'
+        })
+            .then(res => res.text())
+            .then(message => {
+                this.openModal(message);
+                this.loadData();
+                this.setState({
+                    modalOpened: false
+                })
+            })
+            .catch(err => console.error(err));
+
+    }
+
+    removeClickHandler(bic) {
+        let message = "Вы действительно хотите удалить эту запись?";
+        if (window.confirm(message)) {
+            this.remove(bic);
+        }
     }
 
     render() {
-        //console.log('RENDER!');
         return (
             <div className="container">
+                <InfoModal
+                    modalOpened={this.state.modalOpened}
+                    message={this.state.modalMessage}
+                    modalControls={this.state.modalControls}
+                />
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <Heading text={this.heading} />
                     <OrganizationsFilters filtersChanged={this.filter.bind(this)} />
                 </div>
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                    <Button color="primary">
-                        Добавить
-                    </Button>
+                    <Link to='/creditOrganizations/create'>
+                        <Button color="primary">
+                            Добавить
+                        </Button>
+                    </Link>
                     <div className="pagination-area">
                         {
                             this.state.pageCount > 1 && this.state.data.length > 0
                                 ? (
                                     <div id="react-paginate" className="d-flex justify-content-center mb-3">
                                         <ReactPaginate
+                                            previousLabel="<"
+                                            nextLabel=">"
                                             pageCount={this.state.pageCount}
                                             marginPagesDisplayed={2}
                                             pageRangeDisplayed={5}
@@ -175,22 +216,22 @@ class OrganizationsList extends React.Component {
                                                     <td>{ el.Tnp + ' ' + el.Nnp + ' ' + el.Adr }</td>
                                                     <td>{ el.account }</td>
                                                     <td className="d-flex">
-                                                        <div
+                                                        <Link
                                                             className="mr-3 iconWrapper"
                                                             title="Редактировать"
-                                                            onClick={() => {
-                                                                this.edit.bind(this)(el.BIC)
+                                                            to={{
+                                                                pathname: `/creditOrganizations/${el.BIC}/update`
                                                             }}
                                                         >
                                                             <FontAwesomeIcon
                                                                 icon={faEdit}
                                                             />
-                                                        </div>
+                                                        </Link>
                                                         <div
                                                             className="iconWrapper"
                                                             title="Удалить"
                                                             onClick={() => {
-                                                                this.remove.bind(this)(el.BIC)
+                                                                this.removeClickHandler.bind(this)(el.BIC)
                                                             }}
                                                         >
                                                             <FontAwesomeIcon
@@ -213,6 +254,8 @@ class OrganizationsList extends React.Component {
                             ? (
                                 <div id="react-paginate" className="d-flex justify-content-center mb-3">
                                     <ReactPaginate
+                                        previousLabel="<"
+                                        nextLabel=">"
                                         pageCount={this.state.pageCount}
                                         marginPagesDisplayed={2}
                                         pageRangeDisplayed={5}

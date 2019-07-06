@@ -21,6 +21,10 @@ code {
     cursor: pointer;
 }
 
+.red-color {
+    color: #dc3545;
+}
+
 /* Pagination */
 #react-paginate ul {
     display: -ms-flexbox;
