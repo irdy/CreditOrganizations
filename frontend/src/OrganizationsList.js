@@ -267,8 +267,6 @@ class OrganizationsList extends React.Component {
                             ) : null
                     }
                 </div>
-                {/*                    <div>Page: {this.state.page}</div>
-                    <div>Total pages: {this.state.pageCount}</div>*/}
             </div>
         )
     }
