@@ -20,24 +20,7 @@ const Schema = mongoose.Schema;
     }
  */
 
-// {type: Number, required: true}
-
 const participantInfoSchema = new Schema({
-    /*"NameP" : {type: String, required: true},
-    "Rgn" : {type: Number, required: true},
-    "Ind" : {type: Number, required: true},
-    "Tnp" : {type: String, required: true},
-    "Nnp" : {type: String, required: true},
-    "Adr" : {type: String, required: true},
-    "PrntBIC" : {type: Number, required: true},
-    "DateIn" : {type: String, required: true},
-    "PtType" : {type: Number, required: true},
-    "Srvcs" : {type: Number, required: true},
-    "XchType" : {type: Number, required: true},
-    "UID" : {type: Number, required: true},
-    "NPSParticipant" : {type: Number, required: true},
-    "ParticipantStatus" : {type: String, required: true}*/
-
     "NameP" : {type: String, required: true},
     "Rgn" : {type: String},
     "Ind" : {type: String},

@@ -4,6 +4,7 @@ const router = require('./routes/creditOrganization.route');
 const mongoose = require('mongoose');
 //const formidableMiddleware = require('express-formidable');
 const { getErrorStatus } = require('./errorStatuses');
+const formData = require("express-form-data");
 
 const app = express();
 const APP_PORT = 3002;
@@ -34,8 +35,11 @@ app.use(function (req, res, next) {
 
 
 // apply bodyParser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+//app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({extended: true}));
+
+// apply FormData
+app.use(formData.parse({}));
 
 // mount the router on the app
 app.use('/', router);

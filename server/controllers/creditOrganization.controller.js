@@ -88,8 +88,10 @@ const createEntry = (req, res, next) => {
                     next();
                 });
         } else {
-            console.log('entry with same BIC already exists');
-            res.status(409).send('entry with same BIC already exists');
+            let message = 'Запись с таким БИК уже существует';
+            //console.log('entry with same BIC already exists');
+            console.log(message);
+            res.status(409).send(message);
         }
     });
 };
@@ -106,7 +108,7 @@ const updateEntry = (req, res, next) => {
                 },
                 (err, updatedEntry) => {
                     if (err) return next(err);
-                    console.log(`entry with ${req.body.BIC} was successfully updated !`);
+                    console.log(`entry with ${req.body.BIC} was successfully updated!`);
                     res.send(updatedEntry);
                 }
             );
@@ -123,7 +125,8 @@ const deleteEntry = (req, res, next) => {
         if (isExists) {
             Credit_Organization.deleteOne({BIC: req.params.bic}, err => {
                 if (err) return next(err);
-                let message = `entry with ${req.params.bic} was successfully deleted`;
+                //let message = `entry with ${req.params.bic} was successfully deleted`;
+                let message = `Запись с БИК ${req.params.bic} была успешно удалена`;
                 console.log(message);
                 res.send(message);
             })
