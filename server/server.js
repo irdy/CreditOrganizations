@@ -11,8 +11,10 @@ const app = express();
 const APP_PORT = SERVER_PORT || 3002;
 
 // connection with database
-const DB_URL = 'mongodb://admin:admin@localhost/cod';
-mongoose.connect(DB_URL, { useNewUrlParser: true });
+//const DB_URL = 'mongodb://admin:admin@localhost/cod';
+const DB_URL = "mongodb+srv://admin:nUqMZ7Zd39K4BWAl@catspot-4pwdb.gcp.mongodb.net/test?retryWrites=true&w=majority";
+
+mongoose.connect(DB_URL, { useNewUrlParser: true, dbName: 'cod' });
 mongoose.Promise = global.Promise;
 let { connection } = mongoose;
 connection.on('connected', () => {console.log('successfully connected to database')});
@@ -36,15 +38,15 @@ app.use(function (req, res, next) {
 
 app.use(express.static(path.join(__dirname, '../frontend', 'build')));
 
+// apply FormData
+app.use(formData.parse({}));
+
 // mount the router on the app
 app.use('/api', router);
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend', 'build', 'index.html'));
 });
-
-// apply FormData
-app.use(formData.parse({}));
 
 // error handler
 function errorHandler(err, req, res, next) {

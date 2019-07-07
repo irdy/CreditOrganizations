@@ -120,7 +120,7 @@ class OrganizationsList extends React.Component {
     }
 
     remove(bic) {
-        let URL = SERVER_URL + '/creditOrganizations/' + bic;
+        let URL = SERVER_URL + '/api/creditOrganizations/' + bic;
         fetch(URL, {
             method: 'DELETE'
         })

@@ -18,7 +18,7 @@ class CreateOrganization extends React.Component {
                 cancel: false
             }
         };
-        this.URL = SERVER_URL + 'api/creditOrganizations/';
+        this.URL = SERVER_URL + '/api/creditOrganizations';
     }
 
     openModal(message) {

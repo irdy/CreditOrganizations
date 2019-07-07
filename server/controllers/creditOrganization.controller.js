@@ -90,7 +90,7 @@ const createEntry = (req, res, next) => {
             console.log(message);
             res.status(409).send(message);
         }
-    });
+    }).catch(e => next(e));
 };
 
 const updateEntry = (req, res, next) => {
