@@ -1,17 +1,14 @@
 import React from 'react';
-import { Table } from 'reactstrap';
 import ReactPaginate from 'react-paginate';
 import Heading from './Heading';
 import { Button } from 'reactstrap';
 import OrganizationsFilters from './OrganizationsFilters';
-import { Alert } from 'reactstrap';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
-import { faEdit } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import InfoModal from './InfoModal';
+import OrganizationsDataView from './OrganizationsDataView';
+import config from './config.json';
 
-const SERVER_URL = 'http://localhost:3002';
+const { SERVER_URL } = config;
 class OrganizationsList extends React.Component {
     constructor(props) {
         super(props);
@@ -19,6 +16,7 @@ class OrganizationsList extends React.Component {
             data: [],
             page: 1,
             pageCount: 1,
+            entriesCount: 0,
             selected: 0,
             filters: {
                 bic: '',
@@ -59,7 +57,7 @@ class OrganizationsList extends React.Component {
     }
 
     loadData() {
-        let URL = SERVER_URL + '/creditOrganizations';
+        let URL = SERVER_URL + '/api/creditOrganizations';
         URL = OrganizationsList.addSearchParams(URL, this.createParamsCollection());
         fetch(URL, {
             headers: {
@@ -69,12 +67,12 @@ class OrganizationsList extends React.Component {
             .then(res => res.json())
             .then(data => {
                 if (data) {
-                    //console.dir(data.data[0]);
-                    let { page, pageCount } = data;
-                    if (Array.isArray(data.data) && Number.isInteger(page) && Number.isInteger(pageCount)) {
+                    let { entries, page, pageCount, entriesCount } = data;
+                    if (Array.isArray(entries) && Number.isInteger(page) && Number.isInteger(pageCount)) {
                         this.setState({
-                            data: data.data,
+                            data: entries,
                             page,
+                            entriesCount,
                             pageCount
                         })
                     } else {
@@ -114,14 +112,6 @@ class OrganizationsList extends React.Component {
         }
     }
 
-    static renderNoResults() {
-        return (
-            <Alert color="info">
-                Результатов не найдено
-            </Alert>
-        )
-    }
-
     openModal(message) {
         this.setState({
             modalOpened: true,
@@ -146,10 +136,10 @@ class OrganizationsList extends React.Component {
 
     }
 
-    removeClickHandler(bic) {
+    removeCallback(BIC) {
         let message = "Вы действительно хотите удалить эту запись?";
         if (window.confirm(message)) {
-            this.remove(bic);
+            this.remove(BIC);
         }
     }
 
@@ -187,65 +177,28 @@ class OrganizationsList extends React.Component {
                                         >
                                         </ReactPaginate>
                                     </div>
-                                ) : null
+                                )
+                                : null
                         }
                     </div>
                 </div>
-                <div>
+                <OrganizationsDataView
+                    data={this.state.data}
+                    page={this.state.page}
+                    perPage={this.perPage}
+                    removeCallback={this.removeCallback.bind(this)}
+                />
+                <div className="d-flex justify-content-center align-items-center">
                     {
-                        this.state.data.length > 0 ?
-                            (
-                                <Table>
-                                    <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>БИК</th>
-                                        <th>Название</th>
-                                        <th>Адрес</th>
-                                        <th>Корсчет</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {
-                                        this.state.data.map((el, index) => {
-                                            return (
-                                                <tr key={index}>
-                                                    <td>{ (this.state.page - 1) * this.perPage + index + 1 }</td>
-                                                    <td>{ el.BIC }</td>
-                                                    <td>{ el.name }</td>
-                                                    <td>{ el.Tnp + ' ' + el.Nnp + ' ' + el.Adr }</td>
-                                                    <td>{ el.account }</td>
-                                                    <td className="d-flex">
-                                                        <Link
-                                                            className="mr-3 iconWrapper"
-                                                            title="Редактировать"
-                                                            to={{
-                                                                pathname: `/creditOrganizations/${el.BIC}/update`
-                                                            }}
-                                                        >
-                                                            <FontAwesomeIcon
-                                                                icon={faEdit}
-                                                            />
-                                                        </Link>
-                                                        <div
-                                                            className="iconWrapper"
-                                                            title="Удалить"
-                                                            onClick={() => {
-                                                                this.removeClickHandler.bind(this)(el.BIC)
-                                                            }}
-                                                        >
-                                                            <FontAwesomeIcon
-                                                                icon={faTrash}
-                                                            />
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                    </tbody>
-                                </Table>
-                            ) : OrganizationsList.renderNoResults()
+                        this.state.entriesCount
+                            ? (
+                                <p className="mb-2">
+                                    <small className="text-primary">
+                                        Всего организаций - { this.state.entriesCount }
+                                    </small>
+                                </p>
+                            )
+                            : null
                     }
                 </div>
                 <div className="pagination-area">
@@ -264,7 +217,8 @@ class OrganizationsList extends React.Component {
                                     >
                                     </ReactPaginate>
                                 </div>
-                            ) : null
+                            )
+                            : null
                     }
                 </div>
             </div>

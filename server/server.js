@@ -1,13 +1,14 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const router = require('./routes/creditOrganization.route');
 const mongoose = require('mongoose');
-//const formidableMiddleware = require('express-formidable');
 const { getErrorStatus } = require('./errorStatuses');
 const formData = require("express-form-data");
+const path = require('path');
+const config = require('../frontend/src/config');
+const { SERVER_PORT } = config;
 
 const app = express();
-const APP_PORT = 3002;
+const APP_PORT = SERVER_PORT || 3002;
 
 // connection with database
 const DB_URL = 'mongodb://admin:admin@localhost/cod';
@@ -33,16 +34,17 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use(express.static(path.join(__dirname, '../frontend', 'build')));
 
-// apply bodyParser
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({extended: true}));
+// mount the router on the app
+app.use('/api', router);
+
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend', 'build', 'index.html'));
+});
 
 // apply FormData
 app.use(formData.parse({}));
-
-// mount the router on the app
-app.use('/', router);
 
 // error handler
 function errorHandler(err, req, res, next) {

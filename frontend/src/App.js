@@ -15,7 +15,7 @@ function App() {
                 <div className="navbar-inner">
                     <div className="container">
                         <div className="py-3 float-right">© 2019 Copyright:
-                            <a href="javascript:void(0)"> some development</a>
+                            <a href="javascript:void(0)"> brsty Inc.</a>
                         </div>
                     </div>
                 </div>

@@ -3,8 +3,9 @@ import BackButton from './BackButton';
 import OrganizationForm from './OrganizationForm';
 import Heading from './Heading';
 import InfoModal from './InfoModal';
+import config from './config.json';
 
-const SERVER_URL = 'http://localhost:3002';
+const { SERVER_URL } = config;
 class CreateOrganization extends React.Component {
     constructor(props) {
         super(props);
@@ -17,7 +18,7 @@ class CreateOrganization extends React.Component {
                 cancel: false
             }
         };
-        this.URL = SERVER_URL + '/creditOrganizations/';
+        this.URL = SERVER_URL + 'api/creditOrganizations/';
     }
 
     openModal(message) {

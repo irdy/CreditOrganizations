@@ -4,8 +4,9 @@ import OrganizationForm from './OrganizationForm';
 import Heading from './Heading';
 import InfoModal from './InfoModal';
 import { LazyBox } from './LazyBox';
+import config from './config.json';
 
-const SERVER_URL = 'http://localhost:3002';
+const { SERVER_URL } = config;
 class CreateOrganization extends React.Component {
     constructor(props) {
         super(props);
@@ -24,7 +25,7 @@ class CreateOrganization extends React.Component {
     }
 
     loadData(bic) {
-        this.URL = SERVER_URL + '/creditOrganizations/' + bic;
+        this.URL = SERVER_URL + '/api/creditOrganizations/' + bic;
         fetch(this.URL, {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"

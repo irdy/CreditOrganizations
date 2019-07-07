@@ -34,29 +34,29 @@ const getEntries = (req, res, next) => {
         .exec((err, orgs) => {
             Credit_Organization.estimatedDocumentCount().then((count) => {
 
-                let data = [];
+                let entries = [];
                 if (Array.isArray(orgs)) {
-                    data = orgs.map(org => new DataConverter(org));
+                    entries = orgs.map(org => new DataConverter(org));
                 }  else {
                     next(`expected array, but got ${orgs}`);
                 }
 
                 // todo refactor
-                if (data.length === 1) {
+                if (entries.length === 1) {
                     res.send({
-                        data,
+                        entries,
                         page: 1,
                         pageCount: 1
                     });
 
                 } else {
                     res.send({
-                        data,
+                        entries,
                         page,
+                        entriesCount: count,
                         pageCount: Math.ceil(count / perPage)
                     });
                 }
-                next();
             },
             err => {
                 if (err) return next(err);
@@ -71,8 +71,6 @@ const getEntry = (req, res, next) => {
         org !== null
             ? res.send(new DataConverter(org, next))
             : res.status(404).send('Not found');
-
-        next();
     });
 };
 
@@ -85,7 +83,6 @@ const createEntry = (req, res, next) => {
                     if (err) return next(err);
                     console.log(`created entry with BIC ${req.body.BIC}`);
                     res.send(data);
-                    next();
                 });
         } else {
             let message = 'Запись с таким БИК уже существует';
