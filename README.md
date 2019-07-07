@@ -1,0 +1,2 @@
+# CreditOrganizations
+credit organizations dictionary
