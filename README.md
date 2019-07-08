@@ -8,8 +8,9 @@ At the moment the application works only in Russian.
 1) Download or Clone this repository.
 2) Install dependencies:
 ```
-    cd frontend
+    cd CreditOrganizations/frontend
     npm install
+    npm run build
     cd ../server
     npm install   
 ```
