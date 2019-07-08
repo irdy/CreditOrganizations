@@ -1,7 +1,9 @@
 # CreditOrganizations
 ### What is it?
-Credit organizations dictionary - a simple `CRUD` App (Allows you to watch organizations list, 
-create, update and delete data) designed with `MERN` Stack and Bootstrap as UI Library.
+Credit organizations dictionary - a simple `CRUD` App (Allows you to watch **list of russian banks**, 
+create, update and delete data) designed with `MERN` Stack, cloud NoSQL DataBase and Bootstrap as UI Library.
+
+At the moment the application works only in Russian.
 ### Usage
 1) Download or Clone this repository.
 2) Install dependencies:
