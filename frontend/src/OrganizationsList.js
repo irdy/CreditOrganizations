@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import InfoModal from './InfoModal';
 import OrganizationsDataView from './OrganizationsDataView';
 import config from './config.json';
+import { LazyBox } from './LazyBox';
 
 const { SERVER_URL } = config;
 class OrganizationsList extends React.Component {
@@ -27,7 +28,8 @@ class OrganizationsList extends React.Component {
             modalControls: {
                 ok: true,
                 cancel: false
-            }
+            },
+            dataLoaded: false
         };
         this.perPage = 50;
         this.heading = 'Список организаций';
@@ -73,7 +75,8 @@ class OrganizationsList extends React.Component {
                             data: entries,
                             page,
                             entriesCount,
-                            pageCount
+                            pageCount,
+                            dataLoaded: true
                         })
                     } else {
                         console.error('received incorrect data')
@@ -182,15 +185,20 @@ class OrganizationsList extends React.Component {
                         }
                     </div>
                 </div>
-                <OrganizationsDataView
-                    data={this.state.data}
-                    page={this.state.page}
-                    perPage={this.perPage}
-                    removeCallback={this.removeCallback.bind(this)}
+                <LazyBox
+                    component={
+                    <OrganizationsDataView
+                        data={this.state.data}
+                        page={this.state.page}
+                        perPage={this.perPage}
+                        removeCallback={this.removeCallback.bind(this)}
+                    />}
+                    dataLoaded={this.state.dataLoaded}
                 />
+
                 <div className="d-flex justify-content-center align-items-center">
                     {
-                        this.state.entriesCount
+                        this.state.data.length > 0
                             ? (
                                 <p className="mb-2">
                                     <small className="text-primary">

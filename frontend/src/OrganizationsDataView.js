@@ -80,7 +80,16 @@ const OrganizationsDataView = ({data = [], page, perPage, removeCallback}) => (
 );
 
 OrganizationsDataView.propTypes = {
-    data: PropTypes.array,
+    data: PropTypes.arrayOf(
+        PropTypes.shape({
+            BIC: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            Tnp: PropTypes.string.isRequired,
+            Nnp: PropTypes.string.isRequired,
+            Adr: PropTypes.string.isRequired,
+            account: PropTypes.string.isRequired
+        })
+    ),
     page: PropTypes.number.isRequired,
     perPage: PropTypes.number.isRequired,
     removeCallback: PropTypes.func.isRequired
