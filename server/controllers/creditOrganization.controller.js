@@ -1,9 +1,13 @@
 const Credit_Organization = require('../models/creditOrganization.model');
 const DataConverter = require('../models/DataConverter');
+const createError = require('http-errors');
 
 // requested fields from document
 const fields = 'BIC ParticipantInfo.NameP Accounts ParticipantInfo.Tnp ParticipantInfo.Nnp ParticipantInfo.Adr';
 // filters: [bic, name]
+
+// let message = 'entry with such BIC does not exist';
+const notFoundMessage = 'Организация с таким БИК не найдена';
 
 const getQuery = (reqQuery) => {
     if (Object.keys(reqQuery).length > 0) {
@@ -21,8 +25,7 @@ const getQuery = (reqQuery) => {
 };
 
 const getEntries = (req, res, next) => {
-    //console.log('get entries');
-    // pagination
+
     let perPage = 50;
     let page = Number.parseInt(req.query.page, 10) || 1;
 
@@ -38,7 +41,7 @@ const getEntries = (req, res, next) => {
                 if (Array.isArray(orgs)) {
                     entries = orgs.map(org => new DataConverter(org));
                 }  else {
-                    next(`expected array, but got ${orgs}`);
+                    return next(createError(500, `expected array, but got ${orgs}`));
                 }
 
                 // todo refactor
@@ -70,7 +73,7 @@ const getEntry = (req, res, next) => {
 
         org !== null
             ? res.send(new DataConverter(org, next))
-            : res.status(404).send('Not found');
+            : next(createError(404, notFoundMessage))
     });
 };
 
@@ -86,9 +89,8 @@ const createEntry = (req, res, next) => {
                 });
         } else {
             let message = 'Запись с таким БИК уже существует';
-            //console.log('entry with same BIC already exists');
-            console.log(message);
-            res.status(409).send(message);
+            //console.log('entry with such BIC already exists');
+            return next(createError(409, message));
         }
     }).catch(e => next(e));
 };
@@ -100,19 +102,19 @@ const updateEntry = (req, res, next) => {
                 { BIC: req.body.BIC },
                 { $set: DataConverter.convertToModel(req.body) },
                 {
+                    runValidators: true,
                     useFindAndModify: false,
                     new: true
                 },
                 (err, updatedEntry) => {
                     if (err) return next(err);
                     console.log(`entry with ${req.body.BIC} was successfully updated!`);
-                    res.send(updatedEntry);
+                    res.send(new DataConverter(updatedEntry));
                 }
             );
         } else {
-            let message = 'entry with same BIC does not exist';
-            console.log(message);
-            res.status(404).send(message);
+            console.log(notFoundMessage);
+            return next(createError(404, notFoundMessage));
         }
     });
 };
@@ -122,15 +124,15 @@ const deleteEntry = (req, res, next) => {
         if (isExists) {
             Credit_Organization.deleteOne({BIC: req.params.bic}, err => {
                 if (err) return next(err);
-                //let message = `entry with ${req.params.bic} was successfully deleted`;
                 let message = `Запись с БИК ${req.params.bic} была успешно удалена`;
                 console.log(message);
-                res.send(message);
+                res.send({
+                    message
+                });
             })
         } else {
-            let message = 'entry with same BIC does not exist';
-            console.log(message);
-            res.status(404).send(message);
+            console.log(notFoundMessage);
+            return next(createError(404, notFoundMessage));
         }
     });
 };

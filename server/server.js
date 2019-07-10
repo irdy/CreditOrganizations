@@ -48,15 +48,15 @@ app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend', 'build', 'index.html'));
 });
 
-// error handler
+// error handler - must be used last
 function errorHandler(err, req, res, next) {
+    console.log('MESSAGE', err.message);
     let error = {
         name: err.name,
-        message: err._message
+        message: err.message
     };
 
     res.status(err.status || getErrorStatus(err) || 500);
-    console.log(error);
     res.json(error);
 }
 

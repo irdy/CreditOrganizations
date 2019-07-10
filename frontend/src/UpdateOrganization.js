@@ -5,6 +5,10 @@ import Heading from './Heading';
 import InfoModal from './InfoModal';
 import { LazyBox } from './LazyBox';
 import config from './config.json';
+import { fetchData } from './utils/fetchData';
+import { renderNoResults } from './messages';
+
+let successMessage = 'Данные успешно сохранены!';
 
 const { SERVER_URL } = config;
 class CreateOrganization extends React.Component {
@@ -15,7 +19,9 @@ class CreateOrganization extends React.Component {
             data: null,
             isOpen: false,
             modalMessage: '',
-            dataLoaded: false
+            dataLoaded: false,
+            shouldOpenForm: true,
+            notFoundMessage: 'Not found'
         };
         this.modalControls = {
             ok: true,
@@ -26,24 +32,28 @@ class CreateOrganization extends React.Component {
 
     loadData(bic) {
         this.URL = SERVER_URL + '/api/creditOrganizations/' + bic;
-        fetch(this.URL, {
+
+        fetchData(this.URL, {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             }
         })
-            .then(res => res.json())
             .then(data => {
-                if (!data) {
-                    console.error('incorrect data');
-                } else {
-                    this.setState({
-                        heading: data.name,
-                        data,
-                        dataLoaded: true
-                    })
-                }
+                this.setState({
+                    heading: data.name,
+                    data,
+                    dataLoaded: true
+                })
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                if (err.message) {
+                    this.setState({
+                        dataLoaded: true,
+                        shouldOpenForm: false,
+                        notFoundMessage: err.message
+                    });
+                }
+            });
     }
 
     componentDidMount() {
@@ -73,6 +83,25 @@ class CreateOrganization extends React.Component {
         this.closeModal();
     }
 
+    fetchData(formData, setSubmitting) {
+        fetchData(this.URL, {
+            method: 'PUT',
+            body: formData
+        })
+            .then(data => {
+                this.setState({ data }, () => {
+                    this.openModal(successMessage);
+                });
+                setSubmitting(false);
+            })
+            .catch(err => {
+                if (err.message) {
+                    this.openModal(err.message)
+                }
+                setSubmitting(false);
+            })
+    }
+
     updateData(data, setSubmitting) {
         if (typeof setSubmitting !== 'function') {
             console.error('setSubmitting must be a function!');
@@ -83,25 +112,8 @@ class CreateOrganization extends React.Component {
                 formData.append(part, data[part]);
             }
         }
-        fetch(this.URL, {
-            method: 'PUT',
-            body: formData
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data) {
-                    let message = 'Данные успешно обновлены';
-                    this.openModal(message);
-                } else {
-                    console.error('incorrect data');
-                }
 
-                setSubmitting(false);
-            })
-            .catch(err => {
-                setSubmitting(false);
-                console.error(err);
-            })
+        this.fetchData(formData, setSubmitting);
     }
 
     render() {
@@ -118,11 +130,15 @@ class CreateOrganization extends React.Component {
                 </div>
                 <div className="mb-3">
                     <LazyBox component={
-                        <OrganizationForm
-                            update={true}
-                            data={this.state.data}
-                            submitCallback={this.updateData.bind(this)}
-                        />
+                        this.state.shouldOpenForm
+                            ? (
+                                <OrganizationForm
+                                    update={true}
+                                    data={this.state.data}
+                                    submitCallback={this.updateData.bind(this)}
+                                />        
+                            )
+                            : renderNoResults(this.state.notFoundMessage)
                     } dataLoaded={this.state.dataLoaded} />
                 </div>
                 <BackButton />

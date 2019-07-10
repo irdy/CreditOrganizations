@@ -8,6 +8,7 @@ import InfoModal from './InfoModal';
 import OrganizationsDataView from './OrganizationsDataView';
 import config from './config.json';
 import { LazyBox } from './LazyBox';
+import { fetchData } from './utils/fetchData';
 
 const { SERVER_URL } = config;
 class OrganizationsList extends React.Component {
@@ -63,29 +64,31 @@ class OrganizationsList extends React.Component {
     loadData() {
         let URL = SERVER_URL + '/api/creditOrganizations';
         URL = OrganizationsList.addSearchParams(URL, this.createParamsCollection());
-        fetch(URL, {
+
+        fetchData(URL, {
             headers: {
                 "Content-Type": "application/json; charset=utf-8"
             }
         })
-            .then(res => res.json())
             .then(data => {
-                if (data) {
-                    let { entries, page, pageCount, entriesCount } = data;
-                    if (Array.isArray(entries) && Number.isInteger(page) && Number.isInteger(pageCount)) {
-                        this.setState({
-                            data: entries,
-                            page,
-                            entriesCount,
-                            pageCount,
-                            dataLoaded: true
-                        })
-                    } else {
-                        console.error('received incorrect data')
-                    }
+                let { entries, page, pageCount, entriesCount } = data;
+                if (Array.isArray(entries) && Number.isInteger(page) && Number.isInteger(pageCount)) {
+                    this.setState({
+                        data: entries,
+                        page,
+                        entriesCount,
+                        pageCount,
+                        dataLoaded: true
+                    })
+                } else {
+                    console.error('received incorrect data')
                 }
             })
-            .catch(err => {throw new Error(err)})
+            .catch(err => {
+                if (err.message) {
+                    this.openInfoModal(err.message);
+                }
+            });
     }
 
     componentDidMount() {
@@ -158,7 +161,23 @@ class OrganizationsList extends React.Component {
 
     remove(bic) {
         let URL = SERVER_URL + '/api/creditOrganizations/' + bic;
-        fetch(URL, {
+
+        fetchData(URL, {
+            method: 'DELETE'
+        })
+            .then(data => {
+                if (data.message && typeof data.message === 'string') {
+                    this.openInfoModal(data.message);
+                }
+                this.loadData();
+            })
+            .catch(err => {
+                if (err.message) {
+                    this.openInfoModal(err.message)
+                }
+            })
+
+        /*fetch(URL, {
             method: 'DELETE'
         })
             .then(res => res.text())
@@ -166,7 +185,7 @@ class OrganizationsList extends React.Component {
                 this.openInfoModal(message);
                 this.loadData();
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err));*/
 
     }
 

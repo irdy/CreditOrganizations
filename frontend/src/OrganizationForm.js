@@ -20,21 +20,11 @@ class OrganizationForm extends React.Component {
     }
 
     focusTextInput() {
-        console.log(this.textInput.current);
         this.textInput.current.focus();
     }
 
     componentDidMount() {
-        console.log('didmount');
         this.focusTextInput();
-    }
-
-    componentWillUpdate() {
-        console.log('will update');
-    }
-
-    componentDidUpdate() {
-        console.log('update');
     }
 
     render() {
@@ -42,7 +32,7 @@ class OrganizationForm extends React.Component {
             <div>
                 <Formik
                     initialValues={this.props.data || data}
-                    validate={validate}
+                    validate={() => {}}
                     onSubmit={(values, {setSubmitting}) => {
                         let { submitCallback } = this.props;
 
@@ -80,7 +70,7 @@ class OrganizationForm extends React.Component {
                                         id="bicInp"
                                         placeholder={this.props.update === true ? '' : "БИК"}
                                         onChange={handleChange}
-                                        onBlur={() => {setTimeout(handleBlur, 0)}}
+                                        onBlur={handleBlur}
                                     />
                                     {errors.BIC && touched.BIC ? <FormFeedback invalid='true'>{ errors.BIC }</FormFeedback> : null}
                                 </FormGroup>

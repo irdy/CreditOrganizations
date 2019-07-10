@@ -4,6 +4,9 @@ import OrganizationForm from './OrganizationForm';
 import Heading from './Heading';
 import InfoModal from './InfoModal';
 import config from './config.json';
+import { fetchData } from './utils/fetchData';
+
+let successMessage = 'Данные успешно сохранены!';
 
 const { SERVER_URL } = config;
 class CreateOrganization extends React.Component {
@@ -50,34 +53,22 @@ class CreateOrganization extends React.Component {
             }
         }
 
-        const dataExistsStr = 'Запись с теким БИК уже существует!';
-
-        fetch(this.URL, {
+        fetchData(this.URL, {
             method: 'POST',
             body: formData
         })
-            .then(res => {
-                if (res.status === 409) {
-                    return Promise.resolve(dataExistsStr);
-                }
-                return res.json();
-            })
             .then(data => {
-                if (data) {
-                    let message = 'Данные успешно сохранены!';
-                    if (typeof data === 'string') {
-                        if (data === dataExistsStr) {
-                            message = dataExistsStr;
-                        }
-                    }
-                    this.openModal(message);
-                } else {
-                    console.error('incorrect data');
-                }
-
+                this.setState({ data }, () => {
+                    this.openModal(successMessage);
+                });
                 setSubmitting(false);
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                if (err.message) {
+                    this.openModal(err.message)
+                }
+                setSubmitting(false);
+            });
     }
 
     render() {
