@@ -11,21 +11,32 @@ class CreateOrganization extends React.Component {
         super(props);
         this.state = {
             heading: 'Добавление организации',
-            modalOpened: false,
-            modalMessage: '',
-            modalControls: {
-                ok: true,
-                cancel: false
-            }
+            isOpen: false,
+            modalMessage: ''
+        };
+        this.modalControls = {
+            ok: true,
+            cancel: false
         };
         this.URL = SERVER_URL + '/api/creditOrganizations';
     }
 
     openModal(message) {
         this.setState({
-            modalOpened: true,
+            isOpen: true,
             modalMessage: message
         })
+    }
+
+    closeModal() {
+        this.setState({
+            isOpen: false,
+            modalMessage: ''
+        })
+    }
+
+    modalOkBtnClicked() {
+        this.closeModal();
     }
 
     createData(data, setSubmitting) {
@@ -60,9 +71,6 @@ class CreateOrganization extends React.Component {
                         }
                     }
                     this.openModal(message);
-                    this.setState({
-                        modalOpened: false
-                    });
                 } else {
                     console.error('incorrect data');
                 }
@@ -78,9 +86,10 @@ class CreateOrganization extends React.Component {
                 <div className="mb-3">
                     <Heading text={this.state.heading} />
                     <InfoModal
-                        modalOpened={this.state.modalOpened}
+                        isOpen={this.state.isOpen}
                         message={this.state.modalMessage}
-                        modalControls={this.state.modalControls}
+                        modalControls={this.modalControls}
+                        okCallback={this.modalOkBtnClicked.bind(this)}
                     />
                 </div>
                 <div className="mb-3">

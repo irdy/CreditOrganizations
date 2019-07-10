@@ -13,13 +13,13 @@ class CreateOrganization extends React.Component {
         this.state = {
             heading: '',
             data: null,
-            modalOpened: false,
+            isOpen: false,
             modalMessage: '',
-            modalControls: {
-                ok: true,
-                cancel: false
-            },
             dataLoaded: false
+        };
+        this.modalControls = {
+            ok: true,
+            cancel: false
         };
         this.URL = '';
     }
@@ -57,9 +57,20 @@ class CreateOrganization extends React.Component {
 
     openModal(message) {
         this.setState({
-            modalOpened: true,
+            isOpen: true,
             modalMessage: message
         })
+    }
+
+    closeModal() {
+        this.setState({
+            isOpen: false,
+            modalMessage: ''
+        })
+    }
+
+    modalOkBtnClicked() {
+        this.closeModal();
     }
 
     updateData(data, setSubmitting) {
@@ -81,9 +92,6 @@ class CreateOrganization extends React.Component {
                 if (data) {
                     let message = 'Данные успешно обновлены';
                     this.openModal(message);
-                    this.setState({
-                        modalOpened: false
-                    })
                 } else {
                     console.error('incorrect data');
                 }
@@ -102,9 +110,10 @@ class CreateOrganization extends React.Component {
                 <div className="mb-3">
                     <Heading text={this.state.heading} />
                     <InfoModal
-                        modalOpened={this.state.modalOpened}
+                        isOpen={this.state.isOpen}
                         message={this.state.modalMessage}
-                        modalControls={this.state.modalControls}
+                        modalControls={this.modalControls}
+                        okCallback={this.modalOkBtnClicked.bind(this)}
                     />
                 </div>
                 <div className="mb-3">

@@ -4,13 +4,44 @@ import { Col, Row, Button, Form, FormGroup, Label, Input, FormText, FormFeedback
 import { Formik } from 'formik';
 import { validate } from './OrganizationFormValidation';
 
+let data = {
+    BIC: '',
+    name: '',
+    Tnp: '',
+    Nnp: '',
+    Adr: '',
+    account: ''
+};
+
 class OrganizationForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.textInput = React.createRef();
+    }
+
+    focusTextInput() {
+        console.log(this.textInput.current);
+        this.textInput.current.focus();
+    }
+
+    componentDidMount() {
+        console.log('didmount');
+        this.focusTextInput();
+    }
+
+    componentWillUpdate() {
+        console.log('will update');
+    }
+
+    componentDidUpdate() {
+        console.log('update');
+    }
 
     render() {
         return (
             <div>
                 <Formik
-                    initialValues={this.props.data}
+                    initialValues={this.props.data || data}
                     validate={validate}
                     onSubmit={(values, {setSubmitting}) => {
                         let { submitCallback } = this.props;
@@ -39,8 +70,9 @@ class OrganizationForm extends React.Component {
                                 <FormGroup>
                                     <Label for="bicInp">БИК <span className="red-color">*</span></Label>
                                     <Input
+                                        innerRef={this.textInput}
                                         valid={touched.BIC && !errors.BIC}
-                                        invalid={touched.BIC && errors.BIC}
+                                        invalid={touched.BIC && !!errors.BIC}
                                         value={values.BIC}
                                         disabled={this.props.update === true}
                                         name="BIC"
@@ -48,9 +80,9 @@ class OrganizationForm extends React.Component {
                                         id="bicInp"
                                         placeholder={this.props.update === true ? '' : "БИК"}
                                         onChange={handleChange}
-                                        onBlur={handleBlur}
+                                        onBlur={() => {setTimeout(handleBlur, 0)}}
                                     />
-                                    {errors.BIC && touched.BIC ? <FormFeedback invalid>{ errors.BIC }</FormFeedback> : null}
+                                    {errors.BIC && touched.BIC ? <FormFeedback invalid='true'>{ errors.BIC }</FormFeedback> : null}
                                 </FormGroup>
                             </Col>
                             <Col md={6}>
@@ -58,7 +90,7 @@ class OrganizationForm extends React.Component {
                                     <Label for="nameInp">Название <span className="red-color">*</span></Label>
                                     <Input
                                         valid={touched.name && !errors.name}
-                                        invalid={touched.name && errors.name}
+                                        invalid={touched.name && !!errors.name}
                                         value={values.name}
                                         type="text"
                                         name="name"
@@ -67,7 +99,7 @@ class OrganizationForm extends React.Component {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     />
-                                    {errors.name && touched.name ? <FormFeedback invalid>{ errors.name }</FormFeedback> : null}
+                                    {errors.name && touched.name ? <FormFeedback invalid='true'>{ errors.name }</FormFeedback> : null}
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -77,7 +109,7 @@ class OrganizationForm extends React.Component {
                                     <Label for="TnpInp">Тип населенного пункта <span className="red-color">*</span></Label>
                                     <Input
                                         valid={touched.Tnp && !errors.Tnp}
-                                        invalid={touched.Tnp && errors.Tnp}
+                                        invalid={touched.Tnp && !!errors.Tnp}
                                         value={values.Tnp}
                                         type="text"
                                         name="Tnp"
@@ -86,7 +118,7 @@ class OrganizationForm extends React.Component {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     />
-                                    {errors.Tnp && touched.Tnp ? <FormFeedback invalid>{ errors.Tnp }</FormFeedback> : null}
+                                    {errors.Tnp && touched.Tnp ? <FormFeedback invalid='true'>{ errors.Tnp }</FormFeedback> : null}
                                 </FormGroup>
                             </Col>
                             <Col md={4}>
@@ -94,7 +126,7 @@ class OrganizationForm extends React.Component {
                                     <Label for="NnpInp">Название населенного пункта <span className="red-color">*</span></Label>
                                     <Input
                                         valid={touched.Nnp && !errors.Nnp}
-                                        invalid={touched.Nnp && errors.Nnp}
+                                        invalid={touched.Nnp && !!errors.Nnp}
                                         value={values.Nnp}
                                         type="text"
                                         name="Nnp"
@@ -103,7 +135,7 @@ class OrganizationForm extends React.Component {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     />
-                                    {errors.Nnp && touched.Nnp ? <FormFeedback invalid>{ errors.Nnp }</FormFeedback> : null}
+                                    {errors.Nnp && touched.Nnp ? <FormFeedback invalid='true'>{ errors.Nnp }</FormFeedback> : null}
                                 </FormGroup>
                             </Col>
                             <Col md={4}>
@@ -111,7 +143,7 @@ class OrganizationForm extends React.Component {
                                     <Label for="addressInp">Адрес <span className="red-color">*</span></Label>
                                     <Input
                                         valid={touched.Adr && !errors.Adr}
-                                        invalid={touched.Adr && errors.Adr}
+                                        invalid={touched.Adr && !!errors.Adr}
                                         value={values.Adr}
                                         type="text"
                                         name="Adr"
@@ -120,7 +152,7 @@ class OrganizationForm extends React.Component {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     />
-                                    {errors.Adr && touched.Adr ? <FormFeedback invalid>{ errors.Adr }</FormFeedback> : null}
+                                    {errors.Adr && touched.Adr ? <FormFeedback invalid='true'>{ errors.Adr }</FormFeedback> : null}
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -130,7 +162,7 @@ class OrganizationForm extends React.Component {
                                     <Label for="accountInp">Корсчет <span className="red-color">*</span></Label>
                                     <Input
                                         valid={touched.account && !errors.account}
-                                        invalid={touched.account && errors.account}
+                                        invalid={touched.account && !!errors.account}
                                         value={values.account}
                                         type="text"
                                         name="account"
@@ -139,7 +171,7 @@ class OrganizationForm extends React.Component {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     />
-                                    {errors.account && touched.account ? <FormFeedback invalid>{ errors.account }</FormFeedback> : null}
+                                    {errors.account && touched.account ? <FormFeedback invalid='true'>{ errors.account }</FormFeedback> : null}
                                 </FormGroup>
                             </Col>
                         </Row>

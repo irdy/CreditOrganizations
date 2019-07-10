@@ -23,12 +23,14 @@ class OrganizationsList extends React.Component {
                 bic: '',
                 name: ''
             },
-            modalOpened: false,
+            isOpen: false,
             modalMessage: '',
             modalControls: {
                 ok: true,
-                cancel: false
+                cancel: true
             },
+            modalOkCallback: () => {},
+            modalCancelCallback: () => {},
             dataLoaded: false
         };
         this.perPage = 50;
@@ -115,10 +117,42 @@ class OrganizationsList extends React.Component {
         }
     }
 
-    openModal(message) {
+    openInfoModal(modalMessage) {
         this.setState({
-            modalOpened: true,
-            modalMessage: message
+            isOpen: true,
+            modalMessage,
+            modalOkCallback: this.closeModal,
+            modalCancelCallback: () => {},
+            modalControls: {
+                ...this.state.modalControls,
+                ...{
+                    ok: true,
+                    cancel: false
+                }
+            }
+        })
+    }
+
+    openConfirmModal(modalMessage, BIC) {
+        this.setState({
+            isOpen: true,
+            modalMessage,
+            modalOkCallback: () => {this.remove(BIC)},
+            modalCancelCallback: this.closeModal,
+            modalControls: {
+                ...this.state.modalControls,
+                ...{
+                    ok: true,
+                    cancel: true
+                }
+            }
+        });
+    }
+
+    closeModal() {
+        this.setState({
+            isOpen: false,
+            modalMessage: ''
         })
     }
 
@@ -129,30 +163,27 @@ class OrganizationsList extends React.Component {
         })
             .then(res => res.text())
             .then(message => {
-                this.openModal(message);
+                this.openInfoModal(message);
                 this.loadData();
-                this.setState({
-                    modalOpened: false
-                })
             })
             .catch(err => console.error(err));
 
     }
 
     removeCallback(BIC) {
-        let message = "Вы действительно хотите удалить эту запись?";
-        if (window.confirm(message)) {
-            this.remove(BIC);
-        }
+        const message = "Вы действительно хотите удалить эту запись?";
+        this.openConfirmModal(message, BIC);
     }
 
     render() {
         return (
             <div className="container">
                 <InfoModal
-                    modalOpened={this.state.modalOpened}
+                    isOpen={this.state.isOpen}
                     message={this.state.modalMessage}
                     modalControls={this.state.modalControls}
+                    okCallback={this.state.modalOkCallback.bind(this)}
+                    cancelCallback={this.state.modalCancelCallback.bind(this)}
                 />
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <Heading text={this.heading} />

@@ -2,62 +2,53 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 
-class InfoModal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            modal: props.modalOpened
-        };
-
-        this.toggle = this.toggle.bind(this);
+const controlClickHandler = (e, callback) => {
+    if (typeof callback === 'function') {
+        callback();
+    } else {
+        throw new Error('callback is not a function');
     }
+};
 
-    toggle() {
-        this.setState(prevState => ({
-            modal: !prevState.modal
-        }));
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.modalOpened) {
-            this.setState({
-                modal: true
-            })
-        }
-    }
-
-    render() {
-        return (
-            <div>
-                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
-                    <ModalBody>
-                        { this.props.message }
-                    </ModalBody>
-                    <ModalFooter>
-                        {
-                            this.props.modalControls.ok
-                                ? <Button color="primary" onClick={this.toggle}>OK</Button>
-                                : null
-                        }
-                        {
-                            this.props.modalControls.cancel
-                                ? <Button color="secondary" onClick={this.toggle}>Cancel</Button>
-                                : null
-                        }
-                    </ModalFooter>
-                </Modal>
-            </div>
-        );
-    }
-}
+const InfoModal = (props) => (
+    <div>
+        <Modal isOpen={props.isOpen} className={props.className}>
+            <ModalBody>
+                { props.message }
+            </ModalBody>
+            <ModalFooter>
+                {
+                    props.modalControls.ok
+                        ? (
+                            <Button color="primary" onClick={e => {controlClickHandler(e, props.okCallback)}}>
+                                { props.okControlName || 'OK'}
+                            </Button>
+                        )
+                        : null
+                }
+                {
+                    props.modalControls.cancel
+                        ? (
+                            <Button color="secondary" onClick={e => {controlClickHandler(e, props.cancelCallback)}}>
+                                { props.cancelControlName || 'Cancel'}
+                            </Button>
+                        )
+                        : null
+                }
+            </ModalFooter>
+        </Modal>
+    </div>
+);
 
 InfoModal.propTypes = {
-    modalOpened: PropTypes.bool.isRequired,
+    isOpen: PropTypes.bool.isRequired,
     message: PropTypes.string.isRequired,
     modalControls: PropTypes.shape({
         ok: PropTypes.bool,
         cancel: PropTypes.bool
     }).isRequired,
+    okControlName: PropTypes.string,
+    cancelControlName: PropTypes.string,
     okCallback: PropTypes.func,
     cancelCallback: PropTypes.func
 };
