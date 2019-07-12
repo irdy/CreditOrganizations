@@ -1,4 +1,6 @@
 {
   "SERVER_URL": "http://localhost:3002",
-  "SERVER_PORT": "3002"
+  "SERVER_PORT": "3002",
+  "DB_LOGIN": "user",
+  "DB_PASS": "qwWXanEgBbdjYhKl"
 }

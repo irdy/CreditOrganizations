@@ -6,7 +6,7 @@ import InfoModal from './InfoModal';
 import config from './config.json';
 import { fetchData } from './utils/fetchData';
 
-let successMessage = 'Данные успешно сохранены!';
+const successMessage = 'Данные успешно сохранены!';
 
 const { SERVER_URL } = config;
 class CreateOrganization extends React.Component {

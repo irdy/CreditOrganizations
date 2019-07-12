@@ -176,17 +176,6 @@ class OrganizationsList extends React.Component {
                     this.openInfoModal(err.message)
                 }
             })
-
-        /*fetch(URL, {
-            method: 'DELETE'
-        })
-            .then(res => res.text())
-            .then(message => {
-                this.openInfoModal(message);
-                this.loadData();
-            })
-            .catch(err => console.error(err));*/
-
     }
 
     removeCallback(BIC) {

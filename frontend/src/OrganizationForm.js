@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, Row, Button, Form, FormGroup, Label, Input, FormText, FormFeedback } from 'reactstrap';
+import { Col, Row, Button, Form, FormGroup, Label, Input, FormFeedback } from 'reactstrap';
 import { Formik } from 'formik';
 import { validate } from './OrganizationFormValidation';
 
@@ -32,7 +32,7 @@ class OrganizationForm extends React.Component {
             <div>
                 <Formik
                     initialValues={this.props.data || data}
-                    validate={() => {}}
+                    validate={validate}
                     onSubmit={(values, {setSubmitting}) => {
                         let { submitCallback } = this.props;
 

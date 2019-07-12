@@ -5,14 +5,15 @@ const { getErrorStatus } = require('./errorStatuses');
 const formData = require("express-form-data");
 const path = require('path');
 const config = require('../frontend/src/config');
-const { SERVER_PORT } = config;
-
+const { SERVER_PORT, DB_LOGIN, DB_PASS } = config;
+console.log(DB_LOGIN);
+console.log(DB_PASS);
 const app = express();
 const APP_PORT = SERVER_PORT || 3002;
 
 // connection with database
-const DB_URL = 'mongodb://admin:admin@localhost/cod';
-//const DB_URL = "mongodb+srv://admin:nUqMZ7Zd39K4BWAl@catspot-4pwdb.gcp.mongodb.net/test?retryWrites=true&w=majority";
+//const DB_URL = 'mongodb://admin:admin@localhost/cod';
+const DB_URL = `mongodb+srv://${DB_LOGIN}:${DB_PASS}@catspot-4pwdb.gcp.mongodb.net/test?retryWrites=true&w=majority`;
 
 mongoose.connect(DB_URL, { useNewUrlParser: true, dbName: 'cod' });
 mongoose.Promise = global.Promise;
