@@ -6,8 +6,7 @@ const formData = require("express-form-data");
 const path = require('path');
 const config = require('../frontend/src/config');
 const { SERVER_PORT, DB_LOGIN, DB_PASS } = config;
-console.log(DB_LOGIN);
-console.log(DB_PASS);
+
 const app = express();
 const APP_PORT = SERVER_PORT || 3002;
 
