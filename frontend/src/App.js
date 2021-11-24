@@ -14,8 +14,8 @@ function App() {
             <footer className="bg-light row-fluid footer">
                 <div className="navbar-inner">
                     <div className="container">
-                        <div className="py-3 float-right">© 2019 Copyright:
-                            <a href="javascript:void(0)"> brsty Inc.</a>
+                        <div className="py-3 float-right">© 2019 Copyright:{' '}
+                            <span>Irdy</span>
                         </div>
                     </div>
                 </div>

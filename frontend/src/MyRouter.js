@@ -1,18 +1,31 @@
 import React from 'react';
-import { Switch, Route } from 'react-router';
-import { Redirect } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import OrganizationsList from './OrganizationsList';
 import CreateOrganization from './CreateOrganization';
 import UpdateOrganization from './UpdateOrganization';
-// components:
+import { useNavigate } from "react-router";
+
+function RedirectToMainPage() {
+    const navigate = useNavigate();
+
+    React.useEffect(() => {
+        navigate("/creditOrganizations");
+    }, [navigate]);
+
+    return null;
+}
+
 
 const MyRouter = () => (
-    <Switch>
-        <Route exact path="/" render={() => <Redirect to="/creditOrganizations" />} />
-        <Route exact path="/creditOrganizations" component={OrganizationsList} />
-        <Route exact path="/creditOrganizations/create" component={CreateOrganization} />
-        <Route exact path="/creditOrganizations/:bic/update" component={UpdateOrganization} />
-    </Switch>
-);
+    <BrowserRouter>
+        <Routes>
+            <Route exact path="/" element={<RedirectToMainPage/>}/>
+            <Route exact path="/creditOrganizations" element={<OrganizationsList/>}/>
+            <Route exact path="/creditOrganizations/create" element={<CreateOrganization/>}/>
+            <Route exact path="/creditOrganizations/:bic/update" element={<UpdateOrganization/>}/>
+        </Routes>
+    </BrowserRouter>
+)
+
 
 export default MyRouter;

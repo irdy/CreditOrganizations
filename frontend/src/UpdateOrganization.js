@@ -7,11 +7,19 @@ import { LazyBox } from './LazyBox';
 import config from './config.json';
 import { fetchData } from './utils/fetchData';
 import { renderNoResults } from './messages';
+import { useParams } from "react-router";
 
 let successMessage = 'Данные успешно сохранены!';
 
-const { SERVER_URL } = config;
-class CreateOrganization extends React.Component {
+const {SERVER_URL} = config;
+
+export function CreateOrganization() {
+    let params = useParams();
+
+    return <_CreateOrganization bic={params.bic}/>
+}
+
+class _CreateOrganization extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -57,8 +65,8 @@ class CreateOrganization extends React.Component {
     }
 
     componentDidMount() {
-        let { match } = this.props;
-        let { bic } = match.params;
+        let {bic} = this.props;
+
         if (!bic) {
             console.error('can\'t get BIC');
         }
@@ -89,7 +97,7 @@ class CreateOrganization extends React.Component {
             body: formData
         })
             .then(data => {
-                this.setState({ data }, () => {
+                this.setState({data}, () => {
                     this.openModal(successMessage);
                 });
                 setSubmitting(false);
@@ -120,7 +128,7 @@ class CreateOrganization extends React.Component {
         return (
             <div className="container">
                 <div className="mb-3">
-                    <Heading text={this.state.heading} />
+                    <Heading text={this.state.heading}/>
                     <InfoModal
                         isOpen={this.state.isOpen}
                         message={this.state.modalMessage}
@@ -136,12 +144,12 @@ class CreateOrganization extends React.Component {
                                     update={true}
                                     data={this.state.data}
                                     submitCallback={this.updateData.bind(this)}
-                                />        
+                                />
                             )
                             : renderNoResults(this.state.notFoundMessage)
-                    } dataLoaded={this.state.dataLoaded} />
+                    } dataLoaded={this.state.dataLoaded}/>
                 </div>
-                <BackButton />
+                <BackButton/>
             </div>
         )
     }

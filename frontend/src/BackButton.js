@@ -1,18 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withRouter } from 'react-router-dom';
 import { Button } from 'reactstrap';
+import { useNavigate } from "react-router";
 
-const BackButton = ({ history }) => {
-    return (
-        <Button color='success' onClick={history.goBack}>
-            Назад
-        </Button>
-    )
+const BackButton = () => {
+  const navigate = useNavigate();
+
+  return (
+    <Button className={"text-white"} color='success' onClick={() => navigate(-1)}>
+      Назад
+    </Button>
+  )
 };
 
-BackButton.propTypes = {
-    history: PropTypes.any.isRequired
-};
-
-export default withRouter(BackButton);
+export default BackButton;
