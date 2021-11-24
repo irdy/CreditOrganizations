@@ -10,7 +10,7 @@ const { SERVER_PORT, DB_LOGIN, DB_PASS } = config;
 const app = express();
 const APP_PORT = SERVER_PORT || 3002;
 
-// connection with database
+// connection to database
 //const DB_URL = 'mongodb://admin:admin@localhost/cod';
 const DB_URL = `mongodb+srv://${DB_LOGIN}:${DB_PASS}@catspot-4pwdb.gcp.mongodb.net/test?retryWrites=true&w=majority`;
 
