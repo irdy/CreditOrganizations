@@ -13,6 +13,6 @@
     "express": "^4.17.1",
     "express-form-data": "^2.0.17",
     "http-errors": "^1.8.1",
-    "mongoose": "^6.0.13"
+    "mongoose": "^6.4.6"
   }
 }
