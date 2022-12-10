@@ -10,7 +10,7 @@
   "author": "brsty",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-form-data": "^2.0.17",
     "http-errors": "^1.8.1",
     "mongoose": "^6.0.13"
